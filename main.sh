@@ -37,8 +37,7 @@ set_default_policies() {
     echo "Vous avez choisi $chain et $target"
     
     iptables -P $chain $target
-
-
+}
 
 modif_rules_choix() {
 	choix=0
@@ -227,25 +226,46 @@ remove_port_forwarding() {
     echo "Redirection du port $external_port vers $internal_ip:$internal_port supprimée."
 }
 
+add_dis_log() {
+    echo "Voulez vous : 1: activer la journalisation 2: desactiver la journalisation"
+        read log
+    echo "Quelle chaîne ?"
+    read chain
+    if [ $log -eq 1 ]; then
+        iptables -A $chain -j LOG
+    elif [ $log -eq 2 ]; then
+        iptables -D $chain -j LOG
+    else
+        echo "Entre une option valide"
+        add_dis_log
+    fi
+}
 main() {
     script=0
-    
-   
+
+
     while true; do
-        echo -e "Que voulez-vous faire ? \n  1: Configurer les politiques par défaut \n  2: Configurer NAT (masquerade/port forwarding) \n  3: Quitter"
+        echo -e "Que voulez-vous faire ? \n  1: Configurer les politiques par défaut \n 2: Modifier/ajouter/supprimer des regles de pare feu \n  3: Configurer NAT (masquerade/port forwarding) \n 4: Activer ou desactiver la journalisation \n  5: Quitter"
         read script
-        
+
         case $script in
             1)
                 set_default_policies
             ;;
-            2)
+        2)
+        modif_rules_choix
+        ;;
+            3)
                 configure_nat
             ;;
-            3)
+        4)
+        add_dis_log
+        ;;
+            5)
                 echo "Sortie du script."
                 exit 0
             ;;
+
             *)
                 echo "Option invalide. Veuillez choisir 1, 2 ou 3."
             ;;
