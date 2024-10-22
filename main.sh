@@ -39,6 +39,114 @@ set_default_policies() {
     iptables -P $chain $target
 }
 
+        echo "Quels addresse IP voulez vous en entrée?"
+        read addresse1
+        echo "Quels addresse IP voulez vous en sortie?"
+        read addresse2
+        echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
+        read protocole
+        echo "Quel port ou service souhaite tu mettre?"
+        read port
+        echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
+        read target
+        case $target in
+        1) target="ACCEPT" ;;
+        2) target="DROP" ;;
+        3) target="REJECT" ;;
+        esac
+        iptables -R $chain $numero -s $addresse1 -d $addresse2 -p $protocole --dport $port -j $target
+}
+
+modif_rules_choix() {
+	choix=0
+	while [ $choix -lt 1 ] || [ $choix -gt 4 ]; do
+	echo -e "Voulez vous \n 1: Ajouter des regles ? \n 2: modifier des regles \n 3: supprimer des regles \n 4: quitter ."
+	read choix
+	if [ $choix -lt 1 ] || [ $choix -gt 4 ]; then
+	echo "entrer un nombre valide"
+	fi
+	done
+
+	case $choix in
+        1) ajout_rules ;;
+        2) modif_rules ;;
+        3) suppr_rules ;;
+    	esac
+
+}
+
+ajout_rules() {
+	echo "Pour quels trafic : 1: INPUT 2: OUTPUT 3: FORWARD"
+	read chain
+	case $chain in
+	1) chain="INPUT" ;;
+	2) chain="OUTPUT" ;;
+	3) chain="FORWARD" ;;
+	esac
+	echo "Quels addresse IP voulez vous en entrée?"
+	read addresse1
+	echo "Quels addresse IP voulez vous en sortie?"
+	read addresse2
+	echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
+	read protocole
+	echo "Quel port ou service souhaite tu mettre?"
+	read port
+	echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
+	read target
+	case $target in
+        1) target="ACCEPT" ;;
+        2) target="DROP" ;;
+        3) target="REJECT" ;;
+    	esac
+	iptables -A $chain -p $protocole --dport $port -s $addresse1 -d $addresse2 -j $target
+	echo "tu as choisi $addresse1 comme entrée, $addresse2 comme sortie, $protocole comme protocole, $port comme port ou service, et tu a $target"
+}
+
+modif_rules() {
+	echo "Quelle règle souhaite tu modifier?"
+	read numero
+	echo "Pour quels trafic : 1: INPUT 2: OUTPUT 3: FORWARD"
+        read chain
+        case $chain in
+        1) chain="INPUT" ;;
+        2) chain="OUTPUT" ;;
+        3) chain="FORWARD" ;;
+        esac
+        echo "Quels addresse IP voulez vous en entrée?"
+        read addresse1
+        echo "Quels addresse IP voulez vous en sortie?"
+        read addresse2
+        echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
+        read protocole
+        echo "Quel port ou service souhaite tu mettre?"
+        read port
+        echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
+        read target
+	case $target in
+        1) target="ACCEPT" ;;
+        2) target="DROP" ;;
+        3) target="REJECT" ;;
+        esac
+	iptables -R $chain $numero -s $addresse1 -d $addresse2 -p $protocole --dport $port -j $target
+}
+
+suppr_rules() {
+	echo "Quelle règle souhaite tu supprimer?"
+        read numero
+        echo "Pour quels trafic : 1: INPUT 2: OUTPUT 3: FORWARD"
+        read chain
+        case $chain in
+        1) chain="INPUT" ;;
+        2) chain="OUTPUT" ;;
+        3) chain="FORWARD" ;;
+	esac
+	iptables -D $chain $numero
+}
+
+
+
+
+
 configure_nat() {
     action=0
     
