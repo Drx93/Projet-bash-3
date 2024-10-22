@@ -95,8 +95,10 @@ ajout_rules() {
 	read addresse1
 	echo "Quels addresse IP voulez vous en sortie?"
 	read addresse2
-	echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
-	read protocole
+	while [[ $protocole != 'tcp' && $protocole != 'udp' ]]; do
+        echo "Quels Protocole souhaité vous utiliser (tcp/udp) ?"
+        read protocole
+    done
 	echo "Quel port ou service souhaite tu mettre?"
 	read port
 	echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
@@ -124,8 +126,10 @@ modif_rules() {
         read addresse1
         echo "Quels addresse IP voulez vous en sortie?"
         read addresse2
-        echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
+        while [[ $protocole != 'tcp' && $protocole != 'udp' ]]; do
+        echo "Quels Protocole souhaité vous utiliser (tcp/udp) ?"
         read protocole
+        done
         echo "Quel port ou service souhaite tu mettre?"
         read port
         echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
