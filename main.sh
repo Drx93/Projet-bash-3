@@ -85,6 +85,13 @@ ajout_rules() {
     	esac
 	iptables -A $chain -p $protocole --dport $port -s $addresse1 -d $addresse2 -j $target
 	echo "tu as choisi $addresse1 comme entrée, $addresse2 comme sortie, $protocole comme protocole, $port comme port ou service, et tu a $target"
+    echo "Vous avez ajouté une règle à votre firewall"
+        echo "Activer les logs ?"
+        read log
+        if [ $log -eq 1 ] ; then
+            iptables -A $chain -p $protocole --dport $port -j LOG --log-prefix "Blocked: "
+            echo "Logs activé"
+        fi
 }
 
 modif_rules() {
@@ -116,6 +123,13 @@ modif_rules() {
         3) target="REJECT" ;;
         esac
 	iptables -R $chain $numero -s $addresse1 -d $addresse2 -p $protocole --dport $port -j $target
+    echo "Vous avez ajouté une règle à votre firewall"
+        echo "Activer les logs ?"
+        read log
+        if [ $log -eq 1 ] ; then
+            iptables -A $chain -p $protocole --dport $port -j LOG --log-prefix "Blocked: "
+            echo "Logs activé"
+        fi
 }
 
 suppr_rules() {
