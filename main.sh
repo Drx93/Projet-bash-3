@@ -39,6 +39,31 @@ set_default_policies() {
     iptables -P $chain $target
 }
 
+        echo "Quels addresse IP voulez vous en entrée?"
+        read addresse1
+        echo "Quels addresse IP voulez vous en sortie?"
+        read addresse2
+        echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
+        read protocole
+        echo "Quel port ou service souhaite tu mettre?"
+        read port
+        echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
+        read target
+        case $target in
+        1) target="ACCEPT" ;;
+        2) target="DROP" ;;
+        3) target="REJECT" ;;
+        esac
+        iptables -R $chain $numero -s $addresse1 -d $addresse2 -p $protocole --dport $port -j $target
+        echo "Activer les logs ?"
+        read log
+        if [ $log -eq 1 ] ; then
+            iptables -A $chain -p $protocole --dport $port -j $target
+	        echo "Logs activé"
+        fi
+
+}
+
 modif_rules_choix() {
 	choix=0
 	while [ $choix -lt 1 ] || [ $choix -gt 4 ]; do
@@ -226,46 +251,25 @@ remove_port_forwarding() {
     echo "Redirection du port $external_port vers $internal_ip:$internal_port supprimée."
 }
 
-add_dis_log() {
-    echo "Voulez vous : 1: activer la journalisation 2: desactiver la journalisation"
-        read log
-    echo "Quelle chaîne ?"
-    read chain
-    if [ $log -eq 1 ]; then
-        iptables -A $chain -j LOG
-    elif [ $log -eq 2 ]; then
-        iptables -D $chain -j LOG
-    else
-        echo "Entre une option valide"
-        add_dis_log
-    fi
-}
 main() {
     script=0
-
-
+    
+   
     while true; do
-        echo -e "Que voulez-vous faire ? \n  1: Configurer les politiques par défaut \n 2: Modifier/ajouter/supprimer des regles de pare feu \n  3: Configurer NAT (masquerade/port forwarding) \n 4: Activer ou desactiver la journalisation \n  5: Quitter"
+        echo -e "Que voulez-vous faire ? \n  1: Configurer les politiques par défaut \n  2: Configurer NAT (masquerade/port forwarding) \n  3: Quitter"
         read script
-
+        
         case $script in
             1)
                 set_default_policies
             ;;
-        2)
-        modif_rules_choix
-        ;;
-            3)
+            2)
                 configure_nat
             ;;
-        4)
-        add_dis_log
-        ;;
-            5)
+            3)
                 echo "Sortie du script."
                 exit 0
             ;;
-
             *)
                 echo "Option invalide. Veuillez choisir 1, 2 ou 3."
             ;;
