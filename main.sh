@@ -37,25 +37,8 @@ set_default_policies() {
     echo "Vous avez choisi $chain et $target"
     
     iptables -P $chain $target
-}
 
-        echo "Quels addresse IP voulez vous en entrée?"
-        read addresse1
-        echo "Quels addresse IP voulez vous en sortie?"
-        read addresse2
-        echo "Quels Protocole souhaité vous utiliser (TCP/UDP) ?"
-        read protocole
-        echo "Quel port ou service souhaite tu mettre?"
-        read port
-        echo -e "Quelle cible ? \n  1: ACCEPT \n  2: DROP \n  3: REJECT"
-        read target
-        case $target in
-        1) target="ACCEPT" ;;
-        2) target="DROP" ;;
-        3) target="REJECT" ;;
-        esac
-        iptables -R $chain $numero -s $addresse1 -d $addresse2 -p $protocole --dport $port -j $target
-}
+
 
 modif_rules_choix() {
 	choix=0
